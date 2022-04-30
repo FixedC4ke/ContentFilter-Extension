@@ -1,0 +1,21 @@
+{
+    "manifest_version": 3,
+    "version": "0.1",
+    "name": "ContentFilter",
+    "background":{
+        "service_worker": "background.js"
+    },
+    "action":{
+        "default_popup": "popup.html"
+    },
+    "content_scripts": [
+        {
+        "matches":["<all_urls>"],
+        "css": ["fix.css"],
+        "js": ["content.js"]
+        }
+    ],
+    "permissions":[
+        "contextMenus"
+    ]
+}
