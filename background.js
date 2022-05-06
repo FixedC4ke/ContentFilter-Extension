@@ -1,3 +1,5 @@
+chrome.storage.local.set({serverUrl: "http://localhost:8080"});
+
 chrome.runtime.onInstalled.addListener(() => {
   chrome.contextMenus.create({
     id: "cf-error",
@@ -5,10 +7,12 @@ chrome.runtime.onInstalled.addListener(() => {
     contexts: ["selection"],
   });
 
-  fetch("http://localhost:8080/api/classes")
+  chrome.storage.local.get('serverUrl', data=>{
+    fetch(`${data.serverUrl}/api/categories`)
     .then((res) => res.json())
     .then((data) => {
-      data.classes.map((elem) => {
+      chrome.storage.local.set({categories: data});
+      data.map((elem) => {
         chrome.contextMenus.create({
           id: elem,
           title: elem,
@@ -17,20 +21,37 @@ chrome.runtime.onInstalled.addListener(() => {
         });
       });
     });
+  })
+
 });
 
 chrome.contextMenus.onClicked.addListener((info, tab) => {
-  fetch("http://localhost:8080/api/adjust", {
-    method: "POST",
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      text: info.selectionText.trim().replace(/[^а-яё ]/gi, " "),
-      category: info.menuItemId,
-    }),
+  chrome.storage.local.get('serverUrl', data=>{
+    fetch(`${data.serverUrl}/api/adjust`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        text: info.selectionText
+          .replace(/[^а-яё ]/gi, " ")
+          .replace(/  +/g, " ")
+          .trim(),
+        category: info.menuItemId,
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => console.log(data));
   })
-    .then((res) => res.json())
-    .then((data) => console.log(data));
+  
 });
+
+chrome.runtime.onMessage.addListener(
+  function(request, sender, sendResponse){
+    chrome.storage.local.get(request.query, data=>{
+      sendResponse(data);
+    })
+    return true
+  }
+)

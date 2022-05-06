@@ -1,23 +1,17 @@
-.cf-banner{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: black;
-    position: absolute;
-    height: 100%;
-    width: 100%;
-    border: 1px red solid;
-    color: white;
-}
-
-.cf-parent .cf-banner{
-    display: flex;
-}
-
-.cf-parent:hover .cf-banner{
-    display:none;
+.cf-hidden{
+    display: none;
 }
 
 .cf-parent{
-    position: relative;
+    background-color:lightgrey;
+    padding: 5px;
+    display: inline-block;
+}
+
+.cf-parent:hover .cf-hidden{
+    display: inline-block;
+}
+
+.cf-parent:hover .cf-warning{
+    display: none;
 }
