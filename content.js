@@ -22,7 +22,7 @@ chrome.runtime.sendMessage({query: 'categories'}, function(catResponse){
         })
           .then((res) => res.json())
           .then((data) => {
-            if (data[0] < 50) {
+            if (data[0] < 0.5) {
                 const hiddenText = document.createElement('span');
                 const warning = document.createElement('span');
                 const parentSpan = document.createElement('span');
@@ -30,10 +30,10 @@ chrome.runtime.sendMessage({query: 'categories'}, function(catResponse){
                 hiddenText.classList.add('cf-hidden');
                 warning.classList.add('cf-warning');
                 parentSpan.classList.add('cf-parent');
-                let percentageOfUnwanted = 100-data.shift();
+                data.shift();
                 let unwantedCategoryPercentage = Math.max(...data);
                 let unwantedCategoryId = data.indexOf(unwantedCategoryPercentage);
-                warning.innerText = `Неприемлемый контент: ${percentageOfUnwanted}%. С вероятностью ${unwantedCategoryPercentage}% это "${catResponse.categories[unwantedCategoryId+1]}". Наведите, чтобы посмотреть скрытый текст`;
+                warning.innerText = `Неприемлемый контент категории "${catResponse.categories[unwantedCategoryId+1]}". Наведите, чтобы посмотреть скрытый текст`;
                 node.after(parentSpan);
                 hiddenText.appendChild(node);
                 parentSpan.appendChild(warning);
